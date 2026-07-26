@@ -1043,8 +1043,4 @@ async def check_mute(message: Message):
             await message.delete()
         except Exception:
             pass
-from aiogram import Router
-from aiogram.filters import Command
-from aiogram.types import Message
-
-router = Router()
+)
