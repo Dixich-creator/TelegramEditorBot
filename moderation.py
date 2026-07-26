@@ -1022,11 +1022,11 @@ async def radmin(message: Message):
 @router.message(Command("givemoney"))
 async def givemoney(message: Message):
 
-    await message.answer("1. Команда запущена")
+    print("GIVEMONEY СРАБОТАЛ")
 
-    access = await get_access(message.from_user.id)
-
-    await message.answer(f"2. Твой доступ: {access}")
+    await message.answer(
+        "✅ Команда дошла до moderation.py"
+    )
 @router.message()
 async def check_mute(message: Message):
 
