@@ -870,3 +870,14 @@ async def add_business_income():
         )
 
         await db.commit()
+async def add_money(user_id: int, amount: int):
+
+    async with aiosqlite.connect(DATABASE) as db:
+
+        await db.execute("""
+        UPDATE users
+        SET balance = balance + ?
+        WHERE user_id = ?
+        """, (amount, user_id))
+
+        await db.commit()
