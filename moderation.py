@@ -1022,10 +1022,59 @@ async def radmin(message: Message):
 @router.message(Command("givemoney"))
 async def givemoney(message: Message):
 
-    print("GIVEMONEY СРАБОТАЛ")
+    access = await get_access(message.from_user.id)
+
+    if access < 4:
+        await message.answer(
+            "❌ Только создатель может использовать эту команду."
+        )
+        return
+
+
+    if not message.reply_to_message:
+        await message.answer(
+            "❌ Ответь на сообщение пользователя.\n\n"
+            "Пример:\n"
+            "/givemoney 1000000"
+        )
+        return
+
+
+    args = message.text.split()
+
+
+    if len(args) != 2:
+        await message.answer(
+            "❌ Укажи сумму.\n\n"
+            "Пример:\n"
+            "/givemoney 50000"
+        )
+        return
+
+
+    try:
+        amount = int(args[1])
+
+    except ValueError:
+        await message.answer(
+            "❌ Сумма должна быть числом."
+        )
+        return
+
+
+    user = message.reply_to_message.from_user
+
+
+    await add_money(
+        user.id,
+        amount
+    )
+
 
     await message.answer(
-        "✅ Команда дошла до moderation.py"
+        f"💸 Деньги выданы!\n\n"
+        f"👤 Игрок: {user.full_name}\n"
+        f"💰 Сумма: {amount:,} ₽".replace(",", " ")
     )
 @router.message()
 async def check_mute(message: Message):
