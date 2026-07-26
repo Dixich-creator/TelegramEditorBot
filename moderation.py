@@ -6,6 +6,7 @@ MUTE_MESSAGES = [
     "🤣 ЫЫЫЫ ВКИСАЙТ БУСТИИИИТ!"
 ]
 from aiogram import Router
+from database import add_money
 from logs import send_log
 from aiogram.types import Message, ChatPermissions
 from aiogram.filters import Command
