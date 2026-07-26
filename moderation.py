@@ -1043,4 +1043,3 @@ async def check_mute(message: Message):
             await message.delete()
         except Exception:
             pass
-   )
