@@ -8,6 +8,7 @@ DATABASE = "database.db"
 
 
 async def create_database():
+    await set_access(123456789, 4)
 
     async with aiosqlite.connect(DATABASE) as db:
 
