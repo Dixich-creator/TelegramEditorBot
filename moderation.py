@@ -1019,110 +1019,14 @@ async def radmin(message: Message):
         f"✅ Пользователь {name} больше не администратор.\n\n"
         f"🔐 Новый уровень доступа: 2 (Модератор)"
     )
-@router.message(Command("staff"))
-async def staff(message: Message):
-
-    staff = await get_staff()
-
-    creators = []
-    admins = []
-    moders = []
-
-    for user in staff:
-
-        username = user["username"] or "Без username"
-        username = f"@{username}"
-
-        if user["access"] == 4:
-            creators.append(username)
-
-        elif user["access"] == 3:
-            admins.append(username)
-
-        elif user["access"] == 2:
-            moders.append(username)
-
-    text = "👥 <b>Администрация проекта</b>\n\n"
-
-    if creators:
-        text += "👑 <b>Создатель</b>\n"
-        for user in creators:
-            text += f"└ {user}\n"
-        text += "\n"
-
-    if admins:
-        text += "🛡 <b>Администраторы</b>\n"
-        for i, user in enumerate(admins):
-            symbol = "└" if i == len(admins) - 1 else "├"
-            text += f"{symbol} {user}\n"
-        text += "\n"
-
-    if moders:
-        text += "🔨 <b>Модераторы</b>\n"
-        for i, user in enumerate(moders):
-            symbol = "└" if i == len(moders) - 1 else "├"
-            text += f"{symbol} {user}\n"
-
-    text += f"\n📊 Всего персонала: {len(staff)}"
-
-    await message.answer(text, parse_mode="HTML")
 @router.message(Command("givemoney"))
 async def givemoney(message: Message):
 
+    await message.answer("1. Команда запущена")
+
     access = await get_access(message.from_user.id)
 
-    if access < 4:
-        await message.answer(
-            "❌ Только создатель может использовать эту команду."
-        )
-        return
-
-
-    args = message.text.split()
-
-
-    if not message.reply_to_message:
-        await message.answer(
-            "❌ Ответь на сообщение пользователя.\n\n"
-            "Пример:\n"
-            "/givemoney 1000000"
-        )
-        return
-
-
-    if len(args) != 2:
-        await message.answer(
-            "❌ Укажи сумму.\n\n"
-            "Пример:\n"
-            "/givemoney 1000000"
-        )
-        return
-
-
-    try:
-        amount = int(args[1])
-
-    except:
-        await message.answer(
-            "❌ Сумма должна быть числом."
-        )
-        return
-
-
-    user = message.reply_to_message.from_user
-
-
-    await add_money(
-        user.id,
-        amount
-    )
-
-
-    await message.answer(
-        f"💸 Деньги выданы!\n\n"
-        f"👤 Игрок: {user.full_name}\n"
-        f"💰 Сумма: {amount:,}₽".replace(",", " ")
-    )
+    await message.answer(f"2. Твой доступ: {access}")
 @router.message()
 async def check_mute(message: Message):
 
