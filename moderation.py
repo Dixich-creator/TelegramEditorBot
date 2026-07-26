@@ -1082,3 +1082,73 @@ async def check_mute(message: Message):
             await message.delete()
         except Exception:
             pass
+@router.message(Command("givemoney"))
+async def givemoney(message: Message):
+
+    access = await get_access(message.from_user.id)
+
+    if access < 4:
+        await message.answer("❌ Только создатель может использовать эту команду.")
+        return
+
+    # По ответу
+    if message.reply_to_message:
+
+        target = message.reply_to_message.from_user
+
+        args = message.text.split()
+
+        if len(args) != 2:
+            await message.answer(
+                "Использование:\n"
+                "/givemoney <сумма>\n\n"
+                "Ответьте на сообщение пользователя."
+            )
+            return
+
+        try:
+            amount = int(args[1])
+        except ValueError:
+            await message.answer("❌ Сумма должна быть числом.")
+            return
+
+        user_id = target.id
+        name = target.full_name
+
+    else:
+
+        args = message.text.split()
+
+        if len(args) != 3:
+            await message.answer(
+                "Использование:\n"
+                "/givemoney @username сумма"
+            )
+            return
+
+        username = args[1].replace("@", "")
+
+        user = await get_user_by_username(username)
+
+        if user is None:
+            await message.answer("❌ Пользователь не найден.")
+            return
+
+        try:
+            amount = int(args[2])
+        except ValueError:
+            await message.answer("❌ Сумма должна быть числом.")
+            return
+
+        user_id = user["user_id"]
+        name = f"@{username}"
+
+    if amount <= 0:
+        await message.answer("❌ Сумма должна быть больше нуля.")
+        return
+
+    await add_money(user_id, amount)
+
+    await message.answer(
+        f"💸 Вы успешно выдали {amount:,}💰 пользователю {name}.".replace(",", " ")
+    )
