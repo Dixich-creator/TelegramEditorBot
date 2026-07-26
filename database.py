@@ -8,7 +8,6 @@ DATABASE = "database.db"
 
 
 async def create_database():
-    await set_access(7798920511, 4)
 
     async with aiosqlite.connect(DATABASE) as db:
 
@@ -92,6 +91,30 @@ async def create_database():
 
         )
         """)
+        await db.commit()
+
+        # Создаем владельца, если его еще нет
+        await db.execute("""
+        INSERT OR IGNORE INTO users (
+            user_id,
+            username,
+            joined
+        )
+        VALUES (?, ?, ?)
+        """, (
+            7798920511,
+            "",
+            datetime.now().strftime("%d.%m.%Y")
+        ))
+
+        # Выдаем 4 уровень доступа
+        await db.execute("""
+        UPDATE users
+        SET access = 4
+        WHERE user_id = ?
+        """, (7798920511,))
+
+        await db.commit()
 
 
 
