@@ -4,7 +4,7 @@ from aiogram import Bot, Dispatcher
 
 from config import TOKEN
 
-from database import create_database, add_business_income
+from database import create_database, add_business_income, fill_shop
 
 from start import router as start_router
 from profile import router as profile_router
@@ -37,6 +37,10 @@ async def main():
     print("1. Запуск")
 
     await create_database()
+    
+    await fill_shop()
+
+    print("🛒 Магазин загружен")
 
     print("2. База готова")
 
