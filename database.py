@@ -1134,3 +1134,17 @@ async def remove_item(user_id, item_id):
         await db.commit()
 
         return True
+async def set_prefix(user_id, prefix):
+
+    async with aiosqlite.connect(DATABASE) as db:
+
+        await db.execute(
+            """
+            UPDATE users
+            SET prefix=?
+            WHERE user_id=?
+            """,
+            (prefix, user_id)
+        )
+
+        await db.commit()
