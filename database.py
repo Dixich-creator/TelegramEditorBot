@@ -915,23 +915,30 @@ async def fill_shop():
 
     async with aiosqlite.connect(DATABASE) as db:
 
-        await db.execute("""
-        INSERT OR REPLACE INTO shop (id, name, price, type, value)
-        VALUES
-        (1, '🔴 Красный ник', 100000, 'nick_color', 'red'),
-        (2, '🟢 Зеленый ник', 100000, 'nick_color', 'green'),
-        (3, '🔵 Синий ник', 100000, 'nick_color', 'blue'),
+        await db.executemany(
+            """
+            INSERT OR REPLACE INTO shop
+            (id, name, price, type, value)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            [
 
-        (4, 'Префикс «ШИПУЧКА»', 500000, 'prefix', 'ШИПУЧКА'),
-        (5, 'Префикс «ФЛЮГА»', 1000000, 'prefix', 'ФЛЮГА'),
-        (6, 'Префикс «МУХАА»', 2000000, 'prefix', 'МУХАА'),
-        (7, 'Префикс «ДЕМОН»', 5000000, 'prefix', 'ДЕМОН'),
-        (8, 'Префикс «КФГ ФЛЮГЕРА»', 10000000, 'prefix', 'КФГ ФЛЮГЕРА');
-        
-        (9, '🎁 Кейс FLUGER', 1000000, 'case_fluger', 'fluger'),
-        (10, '💰 Кейс Монет', 500000, 'case_money', 'money'),
-        (11, '🏢 Бизнес Кейс', 800000, 'case_business', 'business')
-        """)
+                (1, "🔴 Красный ник", 100000, "nick_color", "red"),
+                (2, "🟢 Зеленый ник", 100000, "nick_color", "green"),
+                (3, "🔵 Синий ник", 100000, "nick_color", "blue"),
+
+                (4, "🥤 Префикс «ШИПУЧКА»", 500000, "prefix", "ШИПУЧКА"),
+                (5, "🌪 Префикс «ФЛЮГА»", 1000000, "prefix", "ФЛЮГА"),
+                (6, "🪰 Префикс «МУХАА»", 2500000, "prefix", "МУХАА"),
+                (7, "😈 Префикс «ДЕМОН»", 5000000, "prefix", "ДЕМОН"),
+                (8, "⚡ Префикс «КФГ ФЛЮГЕРА»", 10000000, "prefix", "КФГ ФЛЮГЕРА"),
+
+                (9, "🎁 Кейс FLUGER", 1000000, "case_fluger", "fluger"),
+                (10, "💰 Кейс Монет", 500000, "case_money", "money"),
+                (11, "🏢 Бизнес Кейс", 800000, "case_business", "business")
+
+            ]
+        )
 
         await db.commit()
 async def get_shop():
