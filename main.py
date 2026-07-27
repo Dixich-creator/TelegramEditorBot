@@ -14,6 +14,7 @@ from payments import router as payments_router
 from nickname import router as nickname_router
 from permissions import router as permissions_router
 from roles import router as roles_router
+from shop import router as shop_router
 from help import router as help_router
 from moderation import router as moderation_router
 from join import router as join_router
@@ -60,6 +61,7 @@ async def main():
     dp.include_router(nickname_router)
     dp.include_router(permissions_router)
     dp.include_router(roles_router)
+    dp.include_router(shop_router)
     dp.include_router(help_router)
     dp.include_router(moderation_router)
     dp.include_router(join_router)
