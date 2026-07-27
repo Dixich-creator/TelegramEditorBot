@@ -1196,5 +1196,22 @@ async def get_news():
             LIMIT 10
             """
         )
+async def set_access(user_id, level):
+
+    async with aiosqlite.connect(DATABASE) as db:
+
+        await db.execute(
+            """
+            UPDATE users
+            SET access = ?
+            WHERE user_id = ?
+            """,
+            (
+                level,
+                user_id
+            )
+        )
+
+        await db.commit()
 
         return await cursor.fetchall()
