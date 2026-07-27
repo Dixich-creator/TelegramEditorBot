@@ -86,8 +86,8 @@ async def reward(message: Message):
 
 
     amount = random.randint(
-        10,
-        10000
+        100000,
+        500000
     )
 
 
@@ -205,7 +205,7 @@ async def buybiz(message: Message):
         f"💰 Стоимость: {biz['price']:,}$\n"
         f"📈 Доход: {biz['income']:,}$/час"
     )
-@router.message(Command("снятьбиз"))
+@router.message(Command("snitbiz"))
 async def take_business(message: Message):
 
     money = await collect_business_money(
