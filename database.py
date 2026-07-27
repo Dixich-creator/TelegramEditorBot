@@ -1090,3 +1090,47 @@ async def use_item(user_id, item_id):
         await db.commit()
 
         return item
+async def remove_item(user_id, item_id):
+
+    async with aiosqlite.connect(DATABASE) as db:
+
+        cursor = await db.execute(
+            """
+            SELECT amount
+            FROM inventory
+            WHERE user_id=? AND item_id=?
+            """,
+            (user_id, item_id)
+        )
+
+        item = await cursor.fetchone()
+
+        if item is None:
+            return False
+
+
+        if item[0] > 1:
+
+            await db.execute(
+                """
+                UPDATE inventory
+                SET amount = amount - 1
+                WHERE user_id=? AND item_id=?
+                """,
+                (user_id, item_id)
+            )
+
+        else:
+
+            await db.execute(
+                """
+                DELETE FROM inventory
+                WHERE user_id=? AND item_id=?
+                """,
+                (user_id, item_id)
+            )
+
+
+        await db.commit()
+
+        return True
