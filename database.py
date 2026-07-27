@@ -911,3 +911,22 @@ async def add_money(user_id, amount):
         )
 
         await db.commit()
+async def fill_shop():
+
+    async with aiosqlite.connect(DATABASE) as db:
+
+        await db.execute("""
+        INSERT OR IGNORE INTO shop (id, name, price, type, value)
+        VALUES
+        (1, '🔴 Красный ник', 100000, 'nickname_color', '🔴'),
+        (2, '🔵 Синий ник', 100000, 'nickname_color', '🔵'),
+        (3, '🟢 Зеленый ник', 100000, 'nickname_color', '🟢'),
+        (4, '🟣 Фиолетовый ник', 150000, 'nickname_color', '🟣'),
+
+        (5, '👑 VIP', 500000, 'prefix', '👑 VIP'),
+        (6, '💎 ELITE', 1000000, 'prefix', '💎 ELITE'),
+        (7, '🔥 LEGEND', 2500000, 'prefix', '🔥 LEGEND'),
+        (8, '⚡ OWNER', 5000000, 'prefix', '⚡ OWNER')
+        """)
+
+        await db.commit()
