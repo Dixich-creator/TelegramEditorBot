@@ -948,7 +948,8 @@ async def fill_shop():
 
                 (9, "🎁 Кейс FLUGER", 1000000, "case_fluger", "fluger"),
                 (10, "💰 Кейс Монет", 500000, "case_money", "money"),
-                (11, "🏢 Бизнес Кейс", 800000, "case_business", "business")
+                (11, "🏢 Бизнес Кейс", 800000, "case_business", "business"),
+                (9, "👑 КФГ ФЛЮГЕРА (ДУЭЛЬ)", 100000000, "duel_boost", "20")
 
             ]
         )
