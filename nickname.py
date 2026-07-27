@@ -1,8 +1,3 @@
-from aiogram import Router
-from aiogram.types import Message
-from aiogram.filters import Command
-
-
 from database import (
     set_nickname,
     remove_nickname,
@@ -18,22 +13,11 @@ router = Router()
 
 @router.message(Command("snick"))
 async def snick(message: Message):
-    args = message.text.split()
-
-    if len(args) < 3:
-
-        await message.answer(
-            "❌ Использование:\n"
-            "/snick @пользователь ник"
-        )
-
-        return
 
     args = message.text.split(maxsplit=2)
 
 
-    # обычный пользователь ставит себе
-
+    # свой ник
     if len(args) == 2:
 
         nickname = args[1]
@@ -46,21 +30,32 @@ async def snick(message: Message):
 
 
         await message.answer(
-f"""
+            f"""
 ✅ Ник установлен
 
-
 Ваш ник:
-
-{nickname}
-"""
+<b>{nickname}</b>
+""",
+            parse_mode="HTML"
         )
 
         return
 
 
 
-    # проверяем права
+    # ник другому пользователю
+    if len(args) < 3:
+
+        await message.answer(
+            "❌ Использование:\n"
+            "/snick ник\n"
+            "или\n"
+            "/snick @пользователь ник"
+        )
+
+        return
+
+
 
     access = await get_access(
         message.from_user.id
@@ -70,15 +65,15 @@ f"""
     if access < 2:
 
         await message.answer(
-            "❌ У вас нет прав"
+            "❌ У вас нет прав.\n"
+            "🛡 Нужно 2+ уровень доступа"
         )
 
         return
 
 
 
-    username = args[1].replace("@","")
-
+    username = args[1].replace("@", "")
 
     nickname = args[2]
 
@@ -105,34 +100,17 @@ f"""
 
 
     await message.answer(
-f"""
-✅ Ник установлен
+        f"""
+✅ Ник изменён
 
-
-Пользователь:
+👤 Пользователь:
 @{username}
 
-
-Ник:
-{nickname}
-"""
+🏷 Новый ник:
+<b>{nickname}</b>
+""",
+        parse_mode="HTML"
     )
-
-
-
-
-from aiogram import Router
-from aiogram.filters import Command
-from aiogram.types import Message
-
-from database import (
-    get_access,
-    remove_nickname
-)
-
-
-router = Router()
-
 
 
 @router.message(Command("rnick"))
