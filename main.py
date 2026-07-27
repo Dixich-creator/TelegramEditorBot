@@ -18,6 +18,7 @@ from shop import router as shop_router
 from help import router as help_router
 from moderation import router as moderation_router
 from join import router as join_router
+from buy import router as buy_router
 
 
 
@@ -65,6 +66,7 @@ async def main():
     dp.include_router(help_router)
     dp.include_router(moderation_router)
     dp.include_router(join_router)
+    dp.include_router(buy_router)
 
 
     asyncio.create_task(
