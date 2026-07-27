@@ -299,27 +299,38 @@ async def roulette(message: Message):
 
     if chance <= 45:
 
-        win = amount * 2
+    win = amount * 2
 
-        await add_money(
-            message.from_user.id,
-            win
-        )
+    await add_money(
+        message.from_user.id,
+        win
+    )
 
-        await message.answer(
-            f"🎰 <b>Рулетка</b>\n\n"
-            f"💰 Ставка: {amount:,}$\n\n"
-            f"🎉 Победа!\n"
-            f"💵 Вы получили: {win:,}$",
-            parse_mode="HTML"
-        )
+    await message.answer(
+        f"""
+🎰 <b>Рулетка</b>
 
+💰 Ставка: {amount:,}$
 
-    else:
+🎉 Победа!
+💵 Вы получили: {win:,}$
 
-        await message.answer(
-            f"🎰 <b>Рулетка</b>\n\n"
-            f"💰 Ставка: {amount:,}$\n\n"
-            f"💥 Вы проиграли!",
-            parse_mode="HTML"
-        )
+{random.choice(WIN_MESSAGES)}
+""",
+        parse_mode="HTML"
+    )
+
+else:
+
+    await message.answer(
+        f"""
+🎰 <b>Рулетка</b>
+
+💰 Ставка: {amount:,}$
+
+💥 Вы проиграли!
+
+{random.choice(LOSE_MESSAGES)}
+""",
+        parse_mode="HTML"
+    )
