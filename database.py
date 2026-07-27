@@ -943,3 +943,66 @@ async def get_shop():
         """)
 
         return await cursor.fetchall()
+async def get_shop_item(item_id):
+
+    async with aiosqlite.connect(DATABASE) as db:
+
+        db.row_factory = aiosqlite.Row
+
+        cursor = await db.execute(
+            "SELECT * FROM shop WHERE id = ?",
+            (item_id,)
+        )
+
+        return await cursor.fetchone()
+async def add_item(user_id, item_id):
+
+    async with aiosqlite.connect(DATABASE) as db:
+
+        cursor = await db.execute(
+            """
+            SELECT amount
+            FROM inventory
+            WHERE user_id=? AND item_id=?
+            """,
+            (user_id, item_id)
+        )
+
+        item = await cursor.fetchone()
+
+        if item:
+
+            await db.execute(
+                """
+                UPDATE inventory
+                SET amount = amount + 1
+                WHERE user_id=? AND item_id=?
+                """,
+                (user_id, item_id)
+            )
+
+        else:
+
+            await db.execute(
+                """
+                INSERT INTO inventory(user_id,item_id,amount)
+                VALUES(?,?,1)
+                """,
+                (user_id, item_id)
+            )
+
+        await db.commit()
+async def remove_money(user_id, amount):
+
+    async with aiosqlite.connect(DATABASE) as db:
+
+        await db.execute(
+            """
+            UPDATE users
+            SET balance = balance - ?
+            WHERE user_id=?
+            """,
+            (amount, user_id)
+        )
+
+        await db.commit()
