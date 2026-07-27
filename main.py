@@ -15,6 +15,7 @@ from payments import router as payments_router
 from nickname import router as nickname_router
 from permissions import router as permissions_router
 from roles import router as roles_router
+from music import router as music_router
 from shop import router as shop_router
 from buy import router as buy_router
 from open_case import router as open_case_router
