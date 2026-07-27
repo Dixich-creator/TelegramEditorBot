@@ -6,6 +6,7 @@ from config import TOKEN
 
 from database import create_database, add_business_income, fill_shop
 
+from news import router as news_router
 from start import router as start_router
 from profile import router as profile_router
 from messages import router as messages_router
@@ -70,6 +71,7 @@ async def main():
     dp.include_router(open_case_router)
     dp.include_router(inventory_router)
     dp.include_router(use_router)
+    dp.include_router(news_router)
     dp.include_router(help_router)
     dp.include_router(moderation_router)
     dp.include_router(join_router)
