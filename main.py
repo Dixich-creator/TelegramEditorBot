@@ -21,6 +21,7 @@ from open_case import router as open_case_router
 from inventory import router as inventory_router
 from use import router as use_router
 from music import router as music_router
+from duel import router as duel_router
 from help import router as help_router
 from moderation import router as moderation_router
 from join import router as join_router
@@ -74,6 +75,7 @@ async def main():
     dp.include_router(use_router)
     dp.include_router(news_router)
     dp.include_router(music_router)
+    dp.include_router(duel_router)
     dp.include_router(help_router)
     dp.include_router(moderation_router)
     dp.include_router(join_router)
