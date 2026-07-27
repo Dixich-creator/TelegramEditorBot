@@ -12,6 +12,21 @@ from aiogram.filters import Command
 from database import get_business_info
 
 import random
+WIN_MESSAGES = [
+    "🔥 КФГ ФЛЮГЕРА ЗАБУСТИИИЛ/АААААА МУХАААА",
+    "😂 ЫЫЫЫЫЫ ФЛЮГА БУСТИТ!",
+    "⚡ ШИПУЧКААААААА!",
+    "🥤 ДЕЛЬТААААААА!",
+    "🚀 КФГ ФЛЮГЕРААААА!"
+]
+
+LOSE_MESSAGES = [
+    "😭 Несправидливооо...",
+    "😢 ЫЫЫЫЫЫЫЫ...",
+    "💔 Не повезло...",
+    "🤣 МУХАААААА...",
+    "🪦 Денег больше нет..."
+]
 import time
 
 
