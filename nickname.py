@@ -1,3 +1,8 @@
+from aiogram import Router
+from aiogram.types import Message
+from aiogram.filters import Command
+
+
 from database import (
     set_nickname,
     remove_nickname,
@@ -8,6 +13,7 @@ from database import (
 
 
 router = Router()
+
 
 
 
