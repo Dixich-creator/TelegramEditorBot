@@ -27,7 +27,16 @@ LOSE_MESSAGES = [
     "🤣 МУХАААААА...",
     "🪦 Денег больше нет..."
 ]
+SLOTS = [
+    "🍒",
+    "🍋",
+    "🍇",
+    "💎",
+    "⭐",
+    "7️⃣"
+]
 import time
+import asyncio
 
 
 from database import get_balance, add_money
@@ -327,3 +336,81 @@ async def roulette(message: Message):
 """,
             parse_mode="HTML"
         )
+@router.message(Command("casino"))
+async def casino(message: Message):
+
+    args = message.text.split()
+
+    if len(args) != 2:
+        await message.answer(
+            "Использование:\n"
+            "/casino сумма"
+        )
+        return
+
+    try:
+        bet = int(args[1])
+    except ValueError:
+        await message.answer("Введите число.")
+        return
+
+    if bet <= 0:
+        await message.answer("Ставка должна быть больше 0.")
+        return
+
+    balance = await get_balance(message.from_user.id)
+
+    if balance < bet:
+        await message.answer("❌ Недостаточно денег.")
+        return
+
+    await remove_money(message.from_user.id, bet)
+
+    msg = await message.answer("🎰 Крутим автомат...")
+
+    await asyncio.sleep(2)
+
+    a = random.choice(SLOTS)
+    b = random.choice(SLOTS)
+    c = random.choice(SLOTS)
+
+    text = (
+        "🎰 <b>Игровой автомат</b>\n\n"
+        f"{a} | {b} | {c}\n\n"
+    )
+
+    if a == b == c:
+
+        win = bet * 5
+
+        await add_money(message.from_user.id, win)
+
+        text += (
+            "🔥 <b>ДЖЕКПОТ!!</b>\n\n"
+            f"💰 Вы выиграли {win:,}$\n\n"
+            f"{random.choice(WIN_MESSAGES)}"
+        )
+
+    elif a == b or b == c or a == c:
+
+        win = bet * 2
+
+        await add_money(message.from_user.id, win)
+
+        text += (
+            "✨ Два одинаковых!\n\n"
+            f"💰 Вы выиграли {win:,}$\n\n"
+            f"{random.choice(WIN_MESSAGES)}"
+        )
+
+    else:
+
+        text += (
+            "💥 Проигрыш!\n\n"
+            f"{random.choice(LOSE_MESSAGES)}"
+        )
+
+    await msg.edit_text(
+        text,
+        parse_mode="HTML"
+    )
