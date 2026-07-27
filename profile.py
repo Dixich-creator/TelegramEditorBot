@@ -81,6 +81,13 @@ f"""
 {user["nickname"] if user["nickname"] else "Нет"}
 
 
+🥤 Префикс:
+{user["prefix"] if user["prefix"] else "Нет"}
+
+🌈 Цвет ника:
+{user["nickname_color"]}
+
+
 🏆 Роль:
 
 {user["role"]}
