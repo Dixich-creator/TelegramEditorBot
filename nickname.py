@@ -18,6 +18,14 @@ router = Router()
 
 @router.message(Command("snick"))
 async def snick(message: Message):
+    args = message.text.split()
+
+    if len(args) < 3:
+    await message.answer(
+        "❌ Использование:\n"
+        "/snick @пользователь ник"
+    )
+    return
 
     args = message.text.split(maxsplit=2)
 
