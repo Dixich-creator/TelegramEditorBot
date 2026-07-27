@@ -76,6 +76,7 @@ async def main():
     dp.include_router(help_router)
     dp.include_router(moderation_router)
     dp.include_router(join_router)
+    dp.include_router(music_router)
 
 
     asyncio.create_task(
