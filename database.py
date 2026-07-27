@@ -1031,3 +1031,51 @@ async def get_inventory(user_id):
         )
 
         return await cursor.fetchall()
+async def use_item(user_id, item_id):
+
+    async with aiosqlite.connect(DATABASE) as db:
+
+        db.row_factory = aiosqlite.Row
+
+        cursor = await db.execute(
+            """
+            SELECT shop.*
+            FROM inventory
+            JOIN shop
+            ON inventory.item_id = shop.id
+            WHERE inventory.user_id = ?
+            AND inventory.item_id = ?
+            """,
+            (user_id, item_id)
+        )
+
+        item = await cursor.fetchone()
+
+        if item is None:
+            return None
+
+        if item["type"] == "prefix":
+
+            await db.execute(
+                """
+                UPDATE users
+                SET prefix = ?
+                WHERE user_id = ?
+                """,
+                (item["value"], user_id)
+            )
+
+        elif item["type"] == "nick_color":
+
+            await db.execute(
+                """
+                UPDATE users
+                SET nickname_color = ?
+                WHERE user_id = ?
+                """,
+                (item["value"], user_id)
+            )
+
+        await db.commit()
+
+        return item
