@@ -1006,3 +1006,28 @@ async def remove_money(user_id, amount):
         )
 
         await db.commit()
+async def get_inventory(user_id):
+
+    async with aiosqlite.connect(DATABASE) as db:
+
+        db.row_factory = aiosqlite.Row
+
+        cursor = await db.execute(
+            """
+            SELECT 
+                inventory.item_id,
+                inventory.amount,
+                shop.name,
+                shop.type,
+                shop.value
+            FROM inventory
+
+            JOIN shop
+            ON inventory.item_id = shop.id
+
+            WHERE inventory.user_id = ?
+            """,
+            (user_id,)
+        )
+
+        return await cursor.fetchall()
