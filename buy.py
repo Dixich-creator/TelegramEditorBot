@@ -9,13 +9,14 @@ from database import (
     add_item
 )
 
+print("BUY.PY ЗАГРУЖЕН")
+
 router = Router()
 
 
 @router.message(Command("buy"))
 async def buy(message: Message):
 
-    print("BUY ЗАПУЩЕН")
 
     args = message.text.split()
 
