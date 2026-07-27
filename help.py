@@ -31,6 +31,9 @@ async def help_command(message: Message):
 /buy ID - купить вещь из магазина
 /open ID - открыть кейс
 /inventory - инвентарь
+/casino - казино
+/duel - дуэль
+/music - музыка
 
 ━━━━━━━━━━━━━━━━━━━━━━
 
