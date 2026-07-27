@@ -1,6 +1,7 @@
 from aiogram import Router
 from aiogram.filters import Command
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 import random
 
@@ -14,7 +15,7 @@ from database import (
 router = Router()
 
 
-# ожидающие дуэли
+# активные дуэли
 duels = {}
 
 
@@ -33,6 +34,7 @@ async def duel(message: Message):
 
     opponent = args[1]
 
+
     try:
         amount = int(args[2])
 
@@ -50,7 +52,7 @@ async def duel(message: Message):
 
     if balance < amount:
         await message.answer(
-            "❌ У вас недостаточно денег."
+            "❌ Недостаточно денег."
         )
         return
 
@@ -62,9 +64,24 @@ async def duel(message: Message):
     }
 
 
+    keyboard = InlineKeyboardBuilder()
+
+
+    keyboard.button(
+        text="✅ Принять",
+        callback_data=f"accept_duel:{message.from_user.id}"
+    )
+
+
+    keyboard.button(
+        text="❌ Отказаться",
+        callback_data=f"cancel_duel:{message.from_user.id}"
+    )
+
+
     await message.answer(
         f"""
-⚔️ <b>Дуэль создана!</b>
+⚔️ <b>ДУЭЛЬ!</b>
 
 🔥 {message.from_user.full_name}
 вызывает {opponent}
@@ -72,65 +89,54 @@ async def duel(message: Message):
 💰 Ставка:
 <b>{amount:,}$</b>
 
-Чтобы принять:
-<code>/accept</code>
+Принять бой?
 """,
-        parse_mode="HTML"
+        parse_mode="HTML",
+        reply_markup=keyboard.as_markup()
     )
 
 
 
-@router.message(Command("accept"))
-async def accept(message: Message):
+@router.callback_query(lambda c: c.data.startswith("accept_duel"))
+async def accept_duel(callback: CallbackQuery):
 
-    if not duels:
 
-        await message.answer(
-            "❌ Нет активных дуэлей."
+    duel_id = int(
+        callback.data.split(":")[1]
+    )
+
+
+    if duel_id not in duels:
+
+        await callback.answer(
+            "❌ Дуэль уже закончена",
+            show_alert=True
         )
+
         return
 
 
-    duel_id = list(duels.keys())[0]
 
     duel = duels[duel_id]
-
 
     amount = duel["amount"]
 
 
-    challenger_balance = await get_balance(
-        duel_id
+    balance = await get_balance(
+        callback.from_user.id
     )
 
 
-    if challenger_balance < amount:
+    if balance < amount:
 
-        await message.answer(
-            "❌ У игрока уже нет денег."
-        )
-
-        del duels[duel_id]
-
-        return
-
-
-    accept_balance = await get_balance(
-        message.from_user.id
-    )
-
-
-    if accept_balance < amount:
-
-        await message.answer(
-            "❌ У вас недостаточно денег."
+        await callback.answer(
+            "❌ У вас нет денег",
+            show_alert=True
         )
 
         return
 
 
-
-    # снимаем ставки
 
     await remove_money(
         duel_id,
@@ -139,17 +145,15 @@ async def accept(message: Message):
 
 
     await remove_money(
-        message.from_user.id,
+        callback.from_user.id,
         amount
     )
 
 
-    # победитель
-
     winner = random.choice(
         [
             duel_id,
-            message.from_user.id
+            callback.from_user.id
         ]
     )
 
@@ -167,18 +171,18 @@ async def accept(message: Message):
         winner_name = duel["name"]
 
     else:
-        winner_name = message.from_user.full_name
+        winner_name = callback.from_user.full_name
 
 
 
-    await message.answer(
+    await callback.message.edit_text(
         f"""
-⚔️ <b>ДУЭЛЬ ЗАКОНЧЕНА!</b>
+⚔️ <b>ДУЭЛЬ ОКОНЧЕНА!</b>
 
-🔥 Победитель:
+🏆 Победитель:
 <b>{winner_name}</b>
 
-💰 Приз:
+💰 Получает:
 <b>{prize:,}$</b>
 
 🎲 Удача решила судьбу!
@@ -188,3 +192,28 @@ async def accept(message: Message):
 
 
     del duels[duel_id]
+
+
+    await callback.answer()
+
+
+
+@router.callback_query(lambda c: c.data.startswith("cancel_duel"))
+async def cancel_duel(callback: CallbackQuery):
+
+    duel_id = int(
+        callback.data.split(":")[1]
+    )
+
+
+    if duel_id in duels:
+
+        del duels[duel_id]
+
+
+    await callback.message.edit_text(
+        "❌ Дуэль отменена."
+    )
+
+
+    await callback.answer()
