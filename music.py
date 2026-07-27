@@ -9,17 +9,6 @@ print("🎵 MUSIC MODULE LOADED")
 @router.message(Command("music"))
 async def music(message: Message):
 
-    video = FSInputFile("media/video.mp4")
+    print("🎵 MUSIC COMMAND WORK")
 
-    await message.answer_video_note(
-        video_note=video
-    )
-
-    audio = FSInputFile("media/fluger.mp3")
-
-    await message.answer_audio(
-        audio=audio,
-        title="Fluger Music",
-        performer="Fluger New",
-        caption="🎵 Приятного прослушивания!"
-    )
+    await message.answer("Музыка команда работает!")
