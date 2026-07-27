@@ -97,6 +97,10 @@ async def open_case(message: Message):
 
 
         reward = random.choice(names)
+        await add_item(
+            message.from_user.id,
+            rewards.index((reward, next(chance for name, chance in rewards if name == reward))) + 4
+        )
 
 
         await message.answer(
