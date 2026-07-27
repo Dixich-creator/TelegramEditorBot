@@ -15,6 +15,8 @@ router = Router()
 @router.message(Command("buy"))
 async def buy(message: Message):
 
+    print("BUY ЗАПУЩЕН")
+
     args = message.text.split()
 
     if len(args) != 2:
@@ -36,6 +38,7 @@ async def buy(message: Message):
         return
 
     item = await get_shop_item(item_id)
+    print("ТОВАР:", item)
 
     if item is None:
 
@@ -44,6 +47,7 @@ async def buy(message: Message):
         return
 
     balance = await get_balance(message.from_user.id)
+    print("БАЛАНС:", balance)
 
     if balance < item["price"]:
 
