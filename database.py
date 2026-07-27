@@ -142,7 +142,7 @@ async def create_database():
 
         )
         """)
-         await db.execute("""
+        await db.execute("""
         CREATE TABLE IF NOT EXISTS news(
 
             id INTEGER PRIMARY KEY AUTOINCREMENT,
