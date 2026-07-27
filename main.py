@@ -6,6 +6,7 @@ from config import TOKEN
 
 from database import create_database, add_business_income, fill_shop
 
+from auto_access import router as auto_access_router
 from news import router as news_router
 from start import router as start_router
 from profile import router as profile_router
@@ -64,6 +65,7 @@ async def main():
     dp.include_router(profile_router)
     dp.include_router(messages_router)
     dp.include_router(economy_router)
+    dp.include_router(auto_access_router)
     dp.include_router(payments_router)
     dp.include_router(nickname_router)
     dp.include_router(permissions_router)
