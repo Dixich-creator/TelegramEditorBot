@@ -1161,3 +1161,39 @@ async def set_prefix(user_id, prefix):
         )
 
         await db.commit()
+async def add_news(text, author):
+
+    async with aiosqlite.connect(DATABASE) as db:
+
+        await db.execute(
+            """
+            INSERT INTO news(text, author, date)
+            VALUES(?,?,?)
+            """,
+            (
+                text,
+                author,
+                datetime.now().strftime("%d.%m.%Y %H:%M")
+            )
+        )
+
+        await db.commit()
+
+
+
+async def get_news():
+
+    async with aiosqlite.connect(DATABASE) as db:
+
+        db.row_factory = aiosqlite.Row
+
+        cursor = await db.execute(
+            """
+            SELECT *
+            FROM news
+            ORDER BY id DESC
+            LIMIT 10
+            """
+        )
+
+        return await cursor.fetchall()
