@@ -257,7 +257,6 @@ async def roulette(message: Message):
         )
         return
 
-
     try:
         amount = int(args[1])
 
@@ -267,18 +266,15 @@ async def roulette(message: Message):
         )
         return
 
-
     if amount <= 0:
         await message.answer(
             "❌ Ставка должна быть больше 0."
         )
         return
 
-
     balance = await get_balance(
         message.from_user.id
     )
-
 
     if balance < amount:
         await message.answer(
@@ -286,28 +282,25 @@ async def roulette(message: Message):
         )
         return
 
-
     # снимаем ставку
     await remove_money(
         message.from_user.id,
         amount
     )
 
-
     chance = random.randint(1, 100)
-
 
     if chance <= 45:
 
-    win = amount * 2
+        win = amount * 2
 
-    await add_money(
-        message.from_user.id,
-        win
-    )
+        await add_money(
+            message.from_user.id,
+            win
+        )
 
-    await message.answer(
-        f"""
+        await message.answer(
+            f"""
 🎰 <b>Рулетка</b>
 
 💰 Ставка: {amount:,}$
@@ -317,13 +310,13 @@ async def roulette(message: Message):
 
 {random.choice(WIN_MESSAGES)}
 """,
-        parse_mode="HTML"
-    )
+            parse_mode="HTML"
+        )
 
-else:
+    else:
 
-    await message.answer(
-        f"""
+        await message.answer(
+            f"""
 🎰 <b>Рулетка</b>
 
 💰 Ставка: {amount:,}$
@@ -332,5 +325,5 @@ else:
 
 {random.choice(LOSE_MESSAGES)}
 """,
-        parse_mode="HTML"
-    )
+            parse_mode="HTML"
+        )
