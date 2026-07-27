@@ -20,6 +20,10 @@ async def create_database():
 
             nickname TEXT DEFAULT '',
 
+            nickname_color TEXT DEFAULT '',
+
+            prefix TEXT DEFAULT '',
+
             role TEXT DEFAULT 'Новый эдитор',
 
             access INTEGER DEFAULT 1,
@@ -115,6 +119,29 @@ async def create_database():
         """, (7798920511,))
 
         await db.commit()
+        # Магазин
+        await db.execute("""
+        CREATE TABLE IF NOT EXISTS shop(
+
+            id INTEGER PRIMARY KEY,
+            name TEXT,
+            price INTEGER,
+            type TEXT,
+            value TEXT
+
+        )
+        """)
+
+        # Инвентарь
+        await db.execute("""
+        CREATE TABLE IF NOT EXISTS inventory(
+
+            user_id INTEGER,
+            item_id INTEGER,
+            amount INTEGER DEFAULT 1
+
+        )
+        """)
 
 
 
