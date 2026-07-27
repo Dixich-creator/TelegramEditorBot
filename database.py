@@ -916,17 +916,17 @@ async def fill_shop():
     async with aiosqlite.connect(DATABASE) as db:
 
         await db.execute("""
-        INSERT OR IGNORE INTO shop (id, name, price, type, value)
+        INSERT OR REPLACE INTO shop (id, name, price, type, value)
         VALUES
-        (1, '🔴 Красный ник', 100000, 'nickname_color', '🔴'),
-        (2, '🔵 Синий ник', 100000, 'nickname_color', '🔵'),
-        (3, '🟢 Зеленый ник', 100000, 'nickname_color', '🟢'),
-        (4, '🟣 Фиолетовый ник', 150000, 'nickname_color', '🟣'),
+        (1, '🔴 Красный ник', 100000, 'nick_color', 'red'),
+        (2, '🟢 Зеленый ник', 100000, 'nick_color', 'green'),
+        (3, '🔵 Синий ник', 100000, 'nick_color', 'blue'),
 
-        (5, '👑 VIP', 500000, 'prefix', '👑 VIP'),
-        (6, '💎 ELITE', 1000000, 'prefix', '💎 ELITE'),
-        (7, '🔥 LEGEND', 2500000, 'prefix', '🔥 LEGEND'),
-        (8, '⚡ OWNER', 5000000, 'prefix', '⚡ OWNER')
+        (4, 'Префикс «ШИПУЧКА»', 500000, 'prefix', 'ШИПУЧКА'),
+        (5, 'Префикс «ФЛЮГА»', 1000000, 'prefix', 'ФЛЮГА'),
+        (6, 'Префикс «МУХАА»', 2500000, 'prefix', 'МУХАА'),
+        (7, 'Префикс «ДЕМОН»', 5000000, 'prefix', 'ДЕМОН'),
+        (8, 'Префикс «КФГ ФЛЮГЕРА»', 10000000, 'prefix', 'КФГ ФЛЮГЕРА');
         """)
 
         await db.commit()
