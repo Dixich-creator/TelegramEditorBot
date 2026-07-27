@@ -8,7 +8,13 @@ router = Router()
 @router.message(Command("music"))
 async def music(message: Message):
 
-    audio = FSInputFile("music/Кишлак - Самый Лучший День.mp3")
+    video = FSInputFile("media/video.mp4")
+
+    await message.answer_video_note(
+        video_note=video
+    )
+
+    audio = FSInputFile("media/fluger.mp3")
 
     await message.answer_audio(
         audio=audio,
