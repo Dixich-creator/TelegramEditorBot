@@ -9,6 +9,8 @@ print("🎵 MUSIC MODULE LOADED")
 @router.message(Command("music"))
 async def music(message: Message):
 
-    print("🎵 MUSIC COMMAND WORK")
+    print("🎵 MUSIC COMMAND RECEIVED")
 
-    await message.answer("Музыка команда работает!")
+    await message.answer(
+        "✅ Команда /music работает"
+    )
