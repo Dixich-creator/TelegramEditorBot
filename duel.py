@@ -8,7 +8,8 @@ import random
 from database import (
     get_balance,
     remove_money,
-    add_money
+    add_money,
+    get_inventory
 )
 
 
@@ -19,16 +20,34 @@ router = Router()
 duels = {}
 
 
+# проверка КФГ ФЛЮГЕРА
+async def has_duel_boost(user_id):
+
+    items = await get_inventory(user_id)
+
+    for item in items:
+
+        if item["item_id"] == 9:
+            return True
+
+    return False
+
+
+
+# создание дуэли
 @router.message(Command("duel"))
 async def duel(message: Message):
 
     args = message.text.split()
 
+
     if len(args) != 3:
+
         await message.answer(
             "⚔️ Использование:\n"
             "/duel @игрок сумма"
         )
+
         return
 
 
@@ -36,13 +55,17 @@ async def duel(message: Message):
 
 
     try:
+
         amount = int(args[2])
 
     except ValueError:
+
         await message.answer(
             "❌ Сумма должна быть числом."
         )
+
         return
+
 
 
     balance = await get_balance(
@@ -51,17 +74,23 @@ async def duel(message: Message):
 
 
     if balance < amount:
+
         await message.answer(
             "❌ Недостаточно денег."
         )
+
         return
 
 
+
     duels[message.from_user.id] = {
+
         "opponent": opponent,
         "amount": amount,
         "name": message.from_user.full_name
+
     }
+
 
 
     keyboard = InlineKeyboardBuilder()
@@ -80,6 +109,7 @@ async def duel(message: Message):
 
 
     await message.answer(
+
         f"""
 ⚔️ <b>ДУЭЛЬ!</b>
 
@@ -91,12 +121,16 @@ async def duel(message: Message):
 
 Принять бой?
 """,
+
         parse_mode="HTML",
         reply_markup=keyboard.as_markup()
+
     )
 
 
 
+
+# принятие дуэли
 @router.callback_query(lambda c: c.data.startswith("accept_duel"))
 async def accept_duel(callback: CallbackQuery):
 
@@ -106,7 +140,9 @@ async def accept_duel(callback: CallbackQuery):
     )
 
 
+
     if duel_id not in duels:
+
 
         await callback.answer(
             "❌ Дуэль уже закончена",
@@ -117,17 +153,23 @@ async def accept_duel(callback: CallbackQuery):
 
 
 
+
     duel = duels[duel_id]
+
 
     amount = duel["amount"]
 
 
-    balance = await get_balance(
+
+
+    player_balance = await get_balance(
         callback.from_user.id
     )
 
 
-    if balance < amount:
+
+    if player_balance < amount:
+
 
         await callback.answer(
             "❌ У вас нет денег",
@@ -135,6 +177,7 @@ async def accept_duel(callback: CallbackQuery):
         )
 
         return
+
 
 
 
@@ -150,15 +193,83 @@ async def accept_duel(callback: CallbackQuery):
     )
 
 
-    winner = random.choice(
-        [
-            duel_id,
-            callback.from_user.id
-        ]
+
+
+    # проверяем КФГ
+
+    challenger_boost = await has_duel_boost(
+        duel_id
     )
 
 
+    player_boost = await has_duel_boost(
+        callback.from_user.id
+    )
+
+
+
+
+    # выбор победителя
+
+    if challenger_boost:
+
+
+        winner = random.choices(
+
+            [
+                duel_id,
+                callback.from_user.id
+            ],
+
+            weights=[
+
+                70,
+                30
+
+            ]
+
+        )[0]
+
+
+
+    elif player_boost:
+
+
+        winner = random.choices(
+
+            [
+                duel_id,
+                callback.from_user.id
+            ],
+
+            weights=[
+
+                30,
+                70
+
+            ]
+
+        )[0]
+
+
+
+    else:
+
+
+        winner = random.choice(
+
+            [
+                duel_id,
+                callback.from_user.id
+            ]
+
+        )
+
+
+
+
     prize = amount * 2
+
 
 
     await add_money(
@@ -167,15 +278,35 @@ async def accept_duel(callback: CallbackQuery):
     )
 
 
+
+
     if winner == duel_id:
+
         winner_name = duel["name"]
 
     else:
+
         winner_name = callback.from_user.full_name
 
 
 
+
+    boost_text = ""
+
+
+    if await has_duel_boost(winner):
+
+        boost_text = (
+
+            "\n\n👑 КФГ ФЛЮГЕРА ЗАБУСТИЛООО 🔥"
+
+        )
+
+
+
+
     await callback.message.edit_text(
+
         f"""
 ⚔️ <b>ДУЭЛЬ ОКОНЧЕНА!</b>
 
@@ -185,10 +316,14 @@ async def accept_duel(callback: CallbackQuery):
 💰 Получает:
 <b>{prize:,}$</b>
 
-🎲 Удача решила судьбу!
+🎲 Судьба решила!
+{boost_text}
 """,
+
         parse_mode="HTML"
+
     )
+
 
 
     del duels[duel_id]
@@ -198,17 +333,22 @@ async def accept_duel(callback: CallbackQuery):
 
 
 
+
+# отказ от дуэли
 @router.callback_query(lambda c: c.data.startswith("cancel_duel"))
 async def cancel_duel(callback: CallbackQuery):
+
 
     duel_id = int(
         callback.data.split(":")[1]
     )
 
 
+
     if duel_id in duels:
 
         del duels[duel_id]
+
 
 
     await callback.message.edit_text(
