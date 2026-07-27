@@ -7,9 +7,8 @@ from database import add_user, add_message
 router = Router()
 
 
-@router.message(lambda message: not message.text.startswith("/"))
-async def all_messages(message: Message):
-
+@router.message(lambda message: message.text and not message.text.startswith("/"))
+async def messages(message: Message):
     if message.from_user is None:
         return
 
