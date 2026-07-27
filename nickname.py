@@ -111,82 +111,71 @@ f"""
 
 
 
+from aiogram import Router
+from aiogram.filters import Command
+from aiogram.types import Message
+
+from database import (
+    get_access,
+    remove_nickname
+)
+
+
+router = Router()
+
+
+
 @router.message(Command("rnick"))
-async def rnick(message: Message):
+async def remove_nick(message: Message):
 
     args = message.text.split()
 
 
-    # удаление своего ника
+    # если указан другой пользователь
 
-    if len(args) == 1:
+    if len(args) > 1:
 
-        await remove_nickname(
+        access = await get_access(
             message.from_user.id
         )
 
 
+        if access < 2:
+
+            await message.answer(
+                "❌ У вас недостаточно прав.\n"
+                "🛡 Нужно: 2 уровень доступа"
+            )
+
+            return
+
+
+        target = args[1]
+
+
+        await remove_nickname(
+            target
+        )
+
+
         await message.answer(
-            "✅ Ваш ник удалён"
+            f"✅ Ник пользователя {target} удалён."
         )
 
         return
 
 
 
-    # удаление чужого ника
-
-    access = await get_access(
-        message.from_user.id
-    )
-
-
-    if access < 2:
-
-        await message.answer(
-            "❌ У вас нет прав"
-        )
-
-        return
-
-
-
-    username = args[1].replace("@","")
-
-
-    user = await get_user_by_username(
-        username
-    )
-
-
-    if user is None:
-
-        await message.answer(
-            "❌ Пользователь не найден"
-        )
-
-        return
-
-
+    # удаление своего ника
 
     await remove_nickname(
-        user["user_id"]
+        message.from_user.id
     )
 
 
     await message.answer(
-f"""
-✅ Ник удалён
-
-
-Пользователь:
-@{username}
-"""
+        "✅ Ваш ник удалён."
     )
-    await remove_nickname(
-        message.from_user.id
-    )
-
 
 
 
