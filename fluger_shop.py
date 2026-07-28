@@ -80,6 +80,9 @@ async def fluger_shop(message: Message):
 """,
         parse_mode="HTML"
     )
+    
+from fluger_items import ITEMS
+
 @router.message(Command("fbuy"))
 async def fbuy(message: Message):
 
