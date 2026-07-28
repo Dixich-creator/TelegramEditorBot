@@ -2,25 +2,25 @@ ITEMS = {
     1: {
         "name": "👑 КФГ ФЛЮГЕРА",
         "price": 500,
-        "item_id": 101
+        "item_id": 13
     },
 
     2: {
         "name": "💰 Денежный буст",
         "price": 100,
-        "item_id": 102
+        "item_id": 14
     },
 
     3: {
         "name": "⚔️ Амулет победителя",
         "price": 250,
-        "item_id": 103
+        "item_id": 15
     },
 
     4: {
         "name": "🎁 Легендарный кейс",
         "price": 150,
-        "item_id": 104
+        "item_id": 16
     }
 }
 from aiogram import Router
