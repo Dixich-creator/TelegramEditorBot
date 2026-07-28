@@ -397,57 +397,21 @@ async def get_access(user_id):
 
     async with aiosqlite.connect(DATABASE) as db:
 
+        db.row_factory = aiosqlite.Row
+
         cursor = await db.execute(
             """
             SELECT access
             FROM users
-            WHERE user_id=?
+            WHERE user_id = ?
             """,
             (user_id,)
         )
 
-        result = await cursor.fetchone()
+        user = await cursor.fetchone()
 
-
-        if result:
-            return result[0]
-
-
-        return 1
-
-
-        result = await cursor.fetchone()
-
-
-        if result:
-
-            return result[0]
-
-
-        return 1
-
-    async with aiosqlite.connect(DATABASE) as db:
-
-        cursor = await db.execute(
-            """
-            SELECT access
-
-            FROM users
-
-            WHERE user_id=?
-            """,
-            (
-                user_id,
-            )
-        )
-
-
-        result = await cursor.fetchone()
-
-
-        if result:
-            return result[0]
-
+        if user:
+            return user["access"]
 
         return 1
 async def change_access(user_id, level):
