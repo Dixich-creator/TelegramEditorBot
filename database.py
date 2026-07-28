@@ -926,8 +926,7 @@ async def fill_shop():
                 (8, "⚡ Префикс «КФГ ФЛЮГЕРА»", 10000000, "prefix", "КФГ ФЛЮГЕРА"),
 
                 (9, "🎁 Кейс FLUGER", 1000000, "case_fluger", "fluger"),
-                (10, "💰 Кейс Монет", 500000, "case_money", "money"),
-                (11, "🏢 Бизнес Кейс", 800000, "case_business", "business"),
+                (10, "💰 Кейс Монет", 500000, "case_money", "money")
 
             ]
         )
