@@ -1390,3 +1390,57 @@ async def get_fluger_inventory(user_id):
         )
 
         return await cursor.fetchall()
+async def get_user_item(user_id, item_id):
+
+    async with aiosqlite.connect(DATABASE) as db:
+
+        db.row_factory = aiosqlite.Row
+
+        cursor = await db.execute(
+            """
+            SELECT *
+            FROM inventory
+            WHERE user_id = ?
+            AND item_id = ?
+            LIMIT 1
+            """,
+            (
+                user_id,
+                item_id
+            )
+        )
+
+        return await cursor.fetchone()
+async def remove_item(user_id, item_id):
+
+    async with aiosqlite.connect(DATABASE) as db:
+
+        cursor = await db.execute(
+            """
+            SELECT rowid
+            FROM inventory
+            WHERE user_id = ?
+            AND item_id = ?
+            LIMIT 1
+            """,
+            (
+                user_id,
+                item_id
+            )
+        )
+
+        row = await cursor.fetchone()
+
+        if row:
+
+            await db.execute(
+                """
+                DELETE FROM inventory
+                WHERE rowid = ?
+                """,
+                (
+                    row[0],
+                )
+            )
+
+        await db.commit()
