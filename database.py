@@ -1178,7 +1178,6 @@ async def set_access(user_id, level):
 
         await db.commit()
 
-        return await cursor.fetchall()
 async def add_user(user_id, username):
 
     async with aiosqlite.connect(DATABASE) as db:
