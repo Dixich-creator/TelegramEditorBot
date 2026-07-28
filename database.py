@@ -1334,3 +1334,36 @@ async def get_fluger_shop():
         )
 
         return await cursor.fetchall()
+async def get_fluger_item(item_id):
+
+    async with aiosqlite.connect(DATABASE) as db:
+
+        db.row_factory = aiosqlite.Row
+
+        cursor = await db.execute(
+            """
+            SELECT *
+            FROM fluger_shop
+            WHERE id = ?
+            """,
+            (item_id,)
+        )
+
+        return await cursor.fetchone()
+async def remove_fluger_coins(user_id, amount):
+
+    async with aiosqlite.connect(DATABASE) as db:
+
+        await db.execute(
+            """
+            UPDATE users
+            SET fluger_coins = fluger_coins - ?
+            WHERE user_id = ?
+            """,
+            (
+                amount,
+                user_id
+            )
+        )
+
+        await db.commit()
