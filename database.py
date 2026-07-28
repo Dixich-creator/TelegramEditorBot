@@ -49,12 +49,6 @@ async def create_database():
 
         )
         """)
-        await db.execute("""
-        ALTER TABLE users
-        ADD COLUMN fluger_coins INTEGER DEFAULT 0
-        """)
-
-
         await db.commit()
         await db.execute("""
         CREATE TABLE IF NOT EXISTS bans(
