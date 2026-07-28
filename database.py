@@ -1215,6 +1215,8 @@ async def set_access(user_id, level):
         await db.commit()
 
         return await cursor.fetchall()
+from datetime import datetime
+
 async def add_user(user_id, username):
 
     async with aiosqlite.connect(DATABASE) as db:
@@ -1225,18 +1227,17 @@ async def add_user(user_id, username):
             (
                 user_id,
                 username,
-                balance,
-                access,
-                role
+                joined
             )
             VALUES
             (
-                ?, ?, 0, 1, 'Новый эдитор'
+                ?, ?, ?
             )
             """,
             (
                 user_id,
-                username
+                username,
+                datetime.now().strftime("%d.%m.%Y")
             )
         )
 
