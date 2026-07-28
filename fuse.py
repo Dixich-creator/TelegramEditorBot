@@ -1,6 +1,5 @@
 from aiogram import Router
 from aiogram.filters import Command
-from fluger_items import ITEMS
 from aiogram.types import Message
 
 import random
@@ -11,42 +10,32 @@ from database import (
     remove_item,
     add_money,
     add_fluger_coins,
-    add_item,
-    add_business
+    add_item
 )
+
+from fluger_items import ITEMS
 
 
 router = Router()
 
 
+
 @router.message(Command("fuse"))
 async def fuse(message: Message):
-shop_id = int(args[1])
-
-
-if shop_id not in ITEMS:
-
-    await message.answer(
-        "❌ Такого предмета нет."
-    )
-
-    return
-
-
-item_id = ITEMS[shop_id]["item_id"]
 
     args = message.text.split()
 
 
-    if len(args) != 14:
+    if len(args) != 2:
 
         await message.answer(
             """
 ❌ Использование:
 
-/fuse ID предмета
+/fuse ID кейса
 
 Пример:
+
 /fuse 4
 """
         )
@@ -57,9 +46,9 @@ item_id = ITEMS[shop_id]["item_id"]
 
     try:
 
-        item_id = int(args[1])
+        shop_id = int(args[1])
 
-    except ValueError:
+    except:
 
         await message.answer(
             "❌ ID должен быть числом."
@@ -68,6 +57,29 @@ item_id = ITEMS[shop_id]["item_id"]
         return
 
 
+
+    # проверяем есть ли такой предмет в магазине
+
+    if shop_id not in ITEMS:
+
+        await message.answer(
+            "❌ Такого предмета нет."
+        )
+
+        return
+
+
+
+    info = ITEMS[shop_id]
+
+
+    # ID предмета в инвентаре
+
+    item_id = info["item_id"]
+
+
+
+    # проверяем наличие предмета
 
     item = await get_user_item(
         message.from_user.id,
@@ -85,283 +97,149 @@ item_id = ITEMS[shop_id]["item_id"]
 
 
 
-    # ==========================
-    # ЛЕГЕНДАРНЫЙ КЕЙС
-    # ==========================
+    # открываем только легендарный кейс
 
-    if item_id == 16:
+    if shop_id != 4:
 
-
-        await remove_item(
-            message.from_user.id,
-            item_id
+        await message.answer(
+            "❌ Этот предмет нельзя открыть."
         )
 
+        return
 
-        msg = await message.answer(
-            """
-🎁 Открываем легендарный кейс...
+
+
+    # удаляем кейс
+
+    await remove_item(
+        message.from_user.id,
+        item_id
+    )
+
+
+
+    msg = await message.answer(
+        """
+🎁 Открываем Легендарный кейс...
 
 🎲 ...
 """
+    )
+
+
+    await asyncio.sleep(2)
+
+
+
+    chance = random.randint(
+        1,
+        100
+    )
+
+
+
+    # 40% деньги
+
+    if chance <= 40:
+
+
+        money = random.randint(
+            1_000_000,
+            10_000_000
         )
 
 
-        await asyncio.sleep(1)
+        await add_money(
+            message.from_user.id,
+            money
+        )
 
 
         await msg.edit_text(
-            """
-🎁 Открываем легендарный кейс...
+            f"""
+🎉 Кейс открыт!
 
-🎲 ........
+💰 Вы получили:
+
+<b>{money:,} монет</b>
 """
+            ,
+            parse_mode="HTML"
         )
 
 
-        await asyncio.sleep(1)
+
+    # 35% FLUGER COINS
+
+    elif chance <= 75:
 
 
-
-        roll = random.randint(
-            1,
+        coins = random.randint(
+            10,
             100
         )
 
 
-
-        # 35% деньги
-
-        if roll <= 35:
-
-
-            money = random.randint(
-                5_000_000,
-                20_000_000
-            )
+        await add_fluger_coins(
+            message.from_user.id,
+            coins
+        )
 
 
-            await add_money(
-                message.from_user.id,
-                money
-            )
-
-
-            await msg.edit_text(
-                f"""
-✨ НАГРАДА НАЙДЕНА!
-
-💰 Вы получили:
-
-<b>{money:,}$</b>
-"""
-            )
-
-
-
-        # 25% fluger coins
-
-        elif roll <= 60:
-
-
-            coins = random.randint(
-                25,
-                100
-            )
-
-
-            await add_fluger_coins(
-                message.from_user.id,
-                coins
-            )
-
-
-            await msg.edit_text(
-                f"""
-✨ НАГРАДА НАЙДЕНА!
+        await msg.edit_text(
+            f"""
+🎉 Кейс открыт!
 
 💎 Вы получили:
 
 <b>{coins} FLUGER COINS</b>
 """
-            )
+            ,
+            parse_mode="HTML"
+        )
 
 
 
-        # 15% бизнес
+    # 15% новый кейс
 
-        elif roll <= 75:
-
-
-            business_id = random.randint(
-                1,
-                5
-            )
+    elif chance <= 90:
 
 
-            await add_business(
-                message.from_user.id,
-                business_id
-            )
+        await add_item(
+            message.from_user.id,
+            16
+        )
 
 
-            await msg.edit_text(
-                f"""
-✨ НАГРАДА НАЙДЕНА!
+        await msg.edit_text(
+            """
+🔥 УДАЧА!
 
-🏢 Вы получили бизнес:
+Вы получили ещё один:
 
-<b>№{business_id}</b>
+🎁 Легендарный кейс
 """
-            )
+        )
 
 
 
-        # 10% КФГ ФЛЮГЕРА
+    # 10% КФГ
 
-        elif roll <= 85:
-
-
-            await add_item(
-                message.from_user.id,
-                1
-            )
+    else:
 
 
-            await msg.edit_text(
-                """
+        await add_item(
+            message.from_user.id,
+            13
+        )
+
+
+        await msg.edit_text(
+            """
 👑 НЕВЕРОЯТНО!
-
-Выпал:
-
-<b>КФГ ФЛЮГЕРА</b>
-
-🔥 Теперь у вас особый предмет!
-"""
-            )
-
-
-
-        # 13% ещё кейс
-
-        elif roll <= 98:
-
-
-            await add_item(
-                message.from_user.id,
-                4
-            )
-
-
-            await msg.edit_text(
-                """
-🎁 ВЫПАЛО ЕЩЁ!
-
-Вы получили:
-
-<b>Легендарный кейс</b>
-"""
-            )
-
-
-
-        # 2% джекпот
-
-        else:
-
-
-            await add_fluger_coins(
-                message.from_user.id,
-                500
-            )
-
-
-            await msg.edit_text(
-                """
-💎💎💎 ДЖЕКПОТ!!!
 
 Вы выбили:
 
-<b>500 FLUGER COINS</b>
-
-🔥 Это очень редкая награда!
-"""
-            )
-
-
-        return
-
-
-
-    # ==========================
-    # КФГ ФЛЮГЕРА
-    # ==========================
-
-    if item_id == 13:
-
-
-        await message.answer(
-            """
 👑 КФГ ФЛЮГЕРА
-
-Этот предмет постоянный.
-
-Он помогает в дуэлях.
-Использовать не нужно.
 """
         )
-
-
-        return
-
-
-
-    # ==========================
-    # ДЕНЕЖНЫЙ БУСТ
-    # ==========================
-
-    if item_id == 14:
-
-
-        await remove_item(
-            message.from_user.id,
-            item_id
-        )
-
-
-        await message.answer(
-            """
-💰 Денежный буст активирован!
-
-Следующая награда будет увеличена.
-"""
-        )
-
-
-        return
-
-
-
-    # ==========================
-    # АМУЛЕТ ДУЭЛЕЙ
-    # ==========================
-
-    if item_id == 15:
-
-
-        await remove_item(
-            message.from_user.id,
-            item_id
-        )
-
-
-        await message.answer(
-            """
-⚔️ Амулет победителя активирован!
-
-Шанс победы в дуэлях увеличен.
-"""
-        )
-
-
-        return
