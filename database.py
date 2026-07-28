@@ -1271,3 +1271,51 @@ async def remove_fluger_coins(user_id, amount):
         )
 
         await db.commit()
+async def fill_fluger_shop():
+
+    async with aiosqlite.connect(DATABASE) as db:
+
+        await db.executemany(
+            """
+            INSERT OR REPLACE INTO fluger_shop
+            (id, name, price, type, value)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            [
+
+                (
+                    1,
+                    "👑 КФГ ФЛЮГЕРА",
+                    500,
+                    "duel_boost",
+                    "20"
+                ),
+
+                (
+                    2,
+                    "💰 Денежный буст",
+                    100,
+                    "reward_boost",
+                    "2"
+                ),
+
+                (
+                    3,
+                    "⚔️ Амулет победителя",
+                    250,
+                    "duel_chance",
+                    "15"
+                ),
+
+                (
+                    4,
+                    "🎁 Легендарный кейс",
+                    150,
+                    "legend_case",
+                    "1"
+                )
+
+            ]
+        )
+
+        await db.commit()
