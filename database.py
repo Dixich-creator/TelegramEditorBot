@@ -1367,3 +1367,26 @@ async def remove_fluger_coins(user_id, amount):
         )
 
         await db.commit()
+async def get_fluger_inventory(user_id):
+
+    async with aiosqlite.connect(DATABASE) as db:
+
+        db.row_factory = aiosqlite.Row
+
+        cursor = await db.execute(
+            """
+            SELECT
+                shop.name,
+                inventory.item_id,
+                COUNT(*) as amount
+            FROM inventory
+            JOIN fluger_shop shop
+                ON inventory.item_id = shop.id
+            WHERE inventory.user_id = ?
+            GROUP BY inventory.item_id
+            ORDER BY inventory.item_id
+            """,
+            (user_id,)
+        )
+
+        return await cursor.fetchall()
