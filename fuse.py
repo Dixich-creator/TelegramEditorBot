@@ -1,5 +1,6 @@
 from aiogram import Router
 from aiogram.filters import Command
+from fluger_items import ITEMS
 from aiogram.types import Message
 
 import random
