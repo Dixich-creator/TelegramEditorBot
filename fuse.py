@@ -24,7 +24,7 @@ async def fuse(message: Message):
     args = message.text.split()
 
 
-    if len(args) != 2:
+    if len(args) != 14:
 
         await message.answer(
             """
@@ -75,7 +75,7 @@ async def fuse(message: Message):
     # ЛЕГЕНДАРНЫЙ КЕЙС
     # ==========================
 
-    if item_id == 4:
+    if item_id == 16:
 
 
         await remove_item(
@@ -283,7 +283,7 @@ async def fuse(message: Message):
     # КФГ ФЛЮГЕРА
     # ==========================
 
-    if item_id == 1:
+    if item_id == 13:
 
 
         await message.answer(
@@ -306,7 +306,7 @@ async def fuse(message: Message):
     # ДЕНЕЖНЫЙ БУСТ
     # ==========================
 
-    if item_id == 2:
+    if item_id == 14:
 
 
         await remove_item(
@@ -332,7 +332,7 @@ async def fuse(message: Message):
     # АМУЛЕТ ДУЭЛЕЙ
     # ==========================
 
-    if item_id == 3:
+    if item_id == 15:
 
 
         await remove_item(
