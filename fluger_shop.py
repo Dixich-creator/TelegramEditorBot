@@ -88,162 +88,73 @@ async def fbuy(message: Message):
     if len(args) != 2:
 
         await message.answer(
-            "Использование:\n"
-            "/fbuy ID"
+            "Использование:\n/fbuy ID"
         )
-
         return
 
-    try:
 
+    try:
         item = int(args[1])
 
     except:
 
-        await message.answer("❌ Неверный ID.")
-
+        await message.answer(
+            "❌ ID должен быть числом."
+        )
         return
+
 
     if item not in ITEMS:
 
-        await message.answer("❌ Такого предмета нет.")
-
+        await message.answer(
+            "❌ Такого предмета нет."
+        )
         return
 
+
     info = ITEMS[item]
+
 
     coins = await get_fluger_coins(
         message.from_user.id
     )
 
+
     if coins < info["price"]:
 
         await message.answer(
-            f"""
-❌ Недостаточно FLUGER COINS
-
-Нужно:
-
-{info["price"]} FC
-"""
+            "❌ Недостаточно FLUGER COINS"
         )
-
         return
+
+
+
+    # списываем FC
 
     await remove_fluger_coins(
         message.from_user.id,
         info["price"]
     )
 
+
+    # добавляем предмет
+
     await add_item(
         message.from_user.id,
         info["item_id"]
     )
 
+
     await message.answer(
         f"""
 ✅ Покупка успешна!
 
-Получено:
+📦 Получено:
 
 {info["name"]}
 
-Потрачено:
-
-{info["price"]} FC
-"""
-    )
-@router.message(Command("fbuy"))
-async def fbuy(message: Message):
-
-    args = message.text.split()
-
-    if len(args) != 2:
-
-        await message.answer(
-            "Использование:\n"
-            "/fbuy ID"
-        )
-
-        return
-
-    try:
-
-        item_id = int(args[1])
-
-    except:
-
-        await message.answer(
-            "❌ Неверный ID."
-        )
-
-        return
-
-
-    item = await get_fluger_item(item_id)
-
-    if item is None:
-
-        await message.answer(
-            "❌ Такого предмета нет."
-        )
-
-        return
-
-
-    coins = await get_fluger_coins(
-        message.from_user.id
-    )
-
-
-    if coins < item["price"]:
-
-        await message.answer(
-            f"""
-❌ Недостаточно FLUGER COINS
-
-Нужно:
-
-💎 {item['price']} FC
-"""
-        )
-
-        return
-
-
-    await remove_fluger_coins(
-        message.from_user.id,
-        item["price"]
-    )
-
-
-    await add_item(
-        message.from_user.id,
-        item["id"]
-    )
-
-
-    left = await get_fluger_coins(
-        message.from_user.id
-    )
-
-
-    await message.answer(
-        f"""
-✅ Покупка успешна!
-
-📦 Предмет:
-
-{item['name']}
-
 💎 Потрачено:
 
-{item['price']} FC
-
-━━━━━━━━━━━━━━
-
-💎 Осталось:
-
-{left} FC
+{info["price"]} FC
 """
     )
