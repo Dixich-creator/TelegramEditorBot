@@ -1373,19 +1373,50 @@ async def get_fluger_inventory(user_id):
 
         cursor = await db.execute(
             """
-            SELECT
-                shop.name,
+            SELECT 
                 inventory.item_id,
-                COUNT(*) as amount
+                COUNT(inventory.item_id) as amount
             FROM inventory
-            JOIN fluger_shop shop
-                ON inventory.item_id = shop.id
             WHERE inventory.user_id = ?
             GROUP BY inventory.item_id
-            ORDER BY inventory.item_id
             """,
             (user_id,)
         )
+
+        rows = await cursor.fetchall()
+
+
+        items = []
+
+
+        names = {
+
+            13: "👑 КФГ ФЛЮГЕРА",
+
+            14: "💰 Денежный буст",
+
+            15: "⚔️ Амулет победителя",
+
+            16: "🎁 Легендарный кейс"
+
+        }
+
+
+        for row in rows:
+
+            items.append(
+                {
+                    "name": names.get(
+                        row["item_id"],
+                        "❓ Неизвестный предмет"
+                    ),
+
+                    "amount": row["amount"]
+                }
+            )
+
+
+        return items
 
         return await cursor.fetchall()
 async def get_user_item(user_id, item_id):
