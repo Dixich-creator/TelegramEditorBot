@@ -17,6 +17,7 @@ from nickname import router as nickname_router
 from permissions import router as permissions_router
 from roles import router as roles_router
 from shop import router as shop_router
+from fluger_shop import router as fluger_shop_router
 from buy import router as buy_router
 from open_case import router as open_case_router
 from inventory import router as inventory_router
@@ -71,6 +72,7 @@ async def main():
     dp.include_router(permissions_router)
     dp.include_router(roles_router)
     dp.include_router(shop_router)
+    dp.include_router(fluger_shop_router)
     dp.include_router(buy_router)
     dp.include_router(open_case_router)
     dp.include_router(inventory_router)
