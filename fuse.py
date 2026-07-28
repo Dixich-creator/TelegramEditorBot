@@ -21,6 +21,19 @@ router = Router()
 
 @router.message(Command("fuse"))
 async def fuse(message: Message):
+shop_id = int(args[1])
+
+
+if shop_id not in ITEMS:
+
+    await message.answer(
+        "❌ Такого предмета нет."
+    )
+
+    return
+
+
+item_id = ITEMS[shop_id]["item_id"]
 
     args = message.text.split()
 
