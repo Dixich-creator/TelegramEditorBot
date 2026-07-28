@@ -4,7 +4,7 @@ from aiogram import Bot, Dispatcher
 
 from config import TOKEN
 
-from database import create_database, add_business_income, fill_shop
+from database import create_database, add_business_income, fill_shop, fill_fluger_shop
 
 from auto_access import router as auto_access_router
 from news import router as news_router
@@ -49,6 +49,8 @@ async def main():
     await create_database()
     
     await fill_shop()
+
+    await fill_fluger_shop()
 
     print("🛒 Магазин загружен")
 
