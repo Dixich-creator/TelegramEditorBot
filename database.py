@@ -1319,3 +1319,18 @@ async def fill_fluger_shop():
         )
 
         await db.commit()
+async def get_fluger_shop():
+
+    async with aiosqlite.connect(DATABASE) as db:
+
+        db.row_factory = aiosqlite.Row
+
+        cursor = await db.execute(
+            """
+            SELECT *
+            FROM fluger_shop
+            ORDER BY id
+            """
+        )
+
+        return await cursor.fetchall()
