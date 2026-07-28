@@ -1,3 +1,4 @@
+COIN_PRICE = 500000
 BUSINESSES = {
     1: {"name": "Ларёк", "price": 50000, "income": 500},
     2: {"name": "Кафе", "price": 250000, "income": 2500},
@@ -48,7 +49,9 @@ from database import (
     remove_money,
     add_business,
     get_reward_time,
-    set_reward_time
+    set_reward_time,
+    get_fluger_coins,
+    add_fluger_coins
 )
 
 
@@ -413,4 +416,116 @@ async def casino(message: Message):
     await msg.edit_text(
         text,
         parse_mode="HTML"
+    )
+@router.message(Command("coins"))
+async def coins(message: Message):
+
+    coins = await get_fluger_coins(
+        message.from_user.id
+    )
+
+    await message.answer(
+        f"""
+💎 <b>FLUGER COINS</b>
+
+Баланс:
+<b>{coins} FC</b>
+""",
+        parse_mode="HTML"
+    )
+@router.message(Command("buycoin"))
+async def buycoin(message: Message):
+
+    args = message.text.split()
+
+    if len(args) != 2:
+
+        await message.answer(
+            "Использование:\n"
+            "/buycoin количество"
+        )
+
+        return
+
+
+    try:
+
+        amount = int(args[1])
+
+    except:
+
+        await message.answer(
+            "❌ Введите число."
+        )
+
+        return
+
+
+    if amount <= 0:
+
+        await message.answer(
+            "❌ Количество должно быть больше 0."
+        )
+
+        return
+
+
+    price = amount * COIN_PRICE
+
+
+    balance = await get_balance(
+        message.from_user.id
+    )
+
+
+    if balance < price:
+
+        await message.answer(
+            f"""
+❌ Недостаточно денег.
+
+Нужно:
+
+{price:,}$
+"""
+        )
+
+        return
+
+
+    await remove_money(
+        message.from_user.id,
+        price
+    )
+
+
+    await add_fluger_coins(
+        message.from_user.id,
+        amount
+    )
+
+
+    coins = await get_fluger_coins(
+        message.from_user.id
+    )
+
+
+    await message.answer(
+        f"""
+💎 Покупка успешна!
+
+Получено:
+
++{amount} FC
+
+Потрачено:
+
+-{price:,}$
+
+━━━━━━━━━━━━━━
+
+💎 Ваш баланс:
+
+{coins} FC
+"""
     )
