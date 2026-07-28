@@ -155,6 +155,21 @@ async def create_database():
 
         )
         """)
+        await db.execute("""
+        CREATE TABLE IF NOT EXISTS fluger_shop(
+
+            id INTEGER PRIMARY KEY,
+
+            name TEXT,
+
+            price INTEGER,
+
+            type TEXT,
+
+            value TEXT
+
+       )
+       """)
 
 
 
