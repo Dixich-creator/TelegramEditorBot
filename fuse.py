@@ -108,7 +108,7 @@ async def fuse(message: Message):
 
 
     # Кейс
-    if item_id == 4:
+if item_id == 4:
 
     await remove_item(
         message.from_user.id,
@@ -117,7 +117,6 @@ async def fuse(message: Message):
 
     roll = random.randint(1, 100)
 
-    # 35%
     if roll <= 35:
 
         money = random.randint(
@@ -131,18 +130,9 @@ async def fuse(message: Message):
         )
 
         await message.answer(
-            f"""
-🎁 Легендарный кейс открыт!
-
-💰 Вы получили
-
-{money:,}$
-
-🔥 Поздравляем!
-"""
+            f"💰 Вы получили {money:,}$"
         )
 
-    # 25%
     elif roll <= 60:
 
         coins = random.randint(
@@ -156,16 +146,9 @@ async def fuse(message: Message):
         )
 
         await message.answer(
-            f"""
-🎁 Легендарный кейс открыт!
-
-💎 Вы получили
-
-{coins} FLUGER COINS
-"""
+            f"💎 Вы получили {coins} FC"
         )
 
-    # 15%
     elif roll <= 75:
 
         business = random.randint(1, 5)
@@ -176,14 +159,9 @@ async def fuse(message: Message):
         )
 
         await message.answer(
-            f"""
-🎁 Легендарный кейс открыт!
-
-🏢 Выпал бизнес №{business}
-"""
+            f"🏢 Выпал бизнес №{business}"
         )
 
-    # 10%
     elif roll <= 85:
 
         await add_item(
@@ -192,16 +170,9 @@ async def fuse(message: Message):
         )
 
         await message.answer(
-            """
-🎁 Легендарный кейс открыт!
-
-👑 Выпала
-
-КФГ ФЛЮГЕРА
-"""
+            "👑 Выпала КФГ ФЛЮГЕРА"
         )
 
-    # 8%
     elif roll <= 93:
 
         await add_item(
@@ -210,14 +181,9 @@ async def fuse(message: Message):
         )
 
         await message.answer(
-            """
-🎁 Легендарный кейс открыт!
-
-🎁 Выпал ещё один легендарный кейс!
-"""
+            "🎁 Выпал ещё один легендарный кейс!"
         )
 
-    # 5%
     elif roll <= 98:
 
         await add_fluger_coins(
@@ -226,16 +192,9 @@ async def fuse(message: Message):
         )
 
         await message.answer(
-            """
-💎 ДЖЕКПОТ!!!
-
-Вы получили
-
-500 FLUGER COINS
-"""
+            "💎 ДЖЕКПОТ! 500 FC!"
         )
 
-    # 2%
     else:
 
         await add_item(
@@ -244,13 +203,7 @@ async def fuse(message: Message):
         )
 
         await message.answer(
-            """
-🌟 НЕВЕРОЯТНО!!
-
-Вы выбили
-
-✨ СЕКРЕТНЫЙ ПРЕДМЕТ ✨
-"""
+            "🌟 СЕКРЕТНЫЙ ПРЕДМЕТ!"
         )
 
     return
