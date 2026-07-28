@@ -35,7 +35,7 @@ async def bot_added(event: ChatMemberUpdated):
 
     for admin in admins:
 
-    if admin.status == ChatMemberStatus.CREATOR:
+        if admin.status == ChatMemberStatus.CREATOR:
 
         await add_user(
             admin.user.id,
