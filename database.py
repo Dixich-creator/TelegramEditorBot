@@ -30,6 +30,8 @@ async def create_database():
 
             balance INTEGER DEFAULT 0,
 
+            fluger_coins INTEGER DEFAULT 0,
+
             messages INTEGER DEFAULT 0,
 
             joined TEXT
@@ -46,6 +48,10 @@ async def create_database():
             reason TEXT
 
         )
+        """)
+        await db.execute("""
+        ALTER TABLE users
+        ADD COLUMN fluger_coins INTEGER DEFAULT 0
         """)
 
 
@@ -1199,6 +1205,59 @@ async def add_user(user_id, username):
                 user_id,
                 username,
                 datetime.now().strftime("%d.%m.%Y")
+            )
+        )
+
+        await db.commit()
+async def get_fluger_coins(user_id):
+
+    async with aiosqlite.connect(DATABASE) as db:
+
+        cursor = await db.execute(
+            """
+            SELECT fluger_coins
+            FROM users
+            WHERE user_id = ?
+            """,
+            (user_id,)
+        )
+
+        row = await cursor.fetchone()
+
+        if row:
+            return row[0]
+
+        return 0
+async def add_fluger_coins(user_id, amount):
+
+    async with aiosqlite.connect(DATABASE) as db:
+
+        await db.execute(
+            """
+            UPDATE users
+            SET fluger_coins = fluger_coins + ?
+            WHERE user_id = ?
+            """,
+            (
+                amount,
+                user_id
+            )
+        )
+
+        await db.commit()
+async def remove_fluger_coins(user_id, amount):
+
+    async with aiosqlite.connect(DATABASE) as db:
+
+        await db.execute(
+            """
+            UPDATE users
+            SET fluger_coins = fluger_coins - ?
+            WHERE user_id = ?
+            """,
+            (
+                amount,
+                user_id
             )
         )
 
