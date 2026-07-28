@@ -1,6 +1,36 @@
+ITEMS = {
+    1: {
+        "name": "👑 КФГ ФЛЮГЕРА",
+        "price": 500,
+        "item_id": 101
+    },
+
+    2: {
+        "name": "💰 Денежный буст",
+        "price": 100,
+        "item_id": 102
+    },
+
+    3: {
+        "name": "⚔️ Амулет победителя",
+        "price": 250,
+        "item_id": 103
+    },
+
+    4: {
+        "name": "🎁 Легендарный кейс",
+        "price": 150,
+        "item_id": 104
+    }
+}
 from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message
+from database import (
+    get_fluger_coins,
+    remove_fluger_coins,
+    add_item
+)
 
 router = Router()
 
@@ -48,4 +78,77 @@ async def fluger_shop(message: Message):
 <code>/fbuy ID</code>
 """,
         parse_mode="HTML"
+    )
+@router.message(Command("fbuy"))
+async def fbuy(message: Message):
+
+    args = message.text.split()
+
+    if len(args) != 2:
+
+        await message.answer(
+            "Использование:\n"
+            "/fbuy ID"
+        )
+
+        return
+
+    try:
+
+        item = int(args[1])
+
+    except:
+
+        await message.answer("❌ Неверный ID.")
+
+        return
+
+    if item not in ITEMS:
+
+        await message.answer("❌ Такого предмета нет.")
+
+        return
+
+    info = ITEMS[item]
+
+    coins = await get_fluger_coins(
+        message.from_user.id
+    )
+
+    if coins < info["price"]:
+
+        await message.answer(
+            f"""
+❌ Недостаточно FLUGER COINS
+
+Нужно:
+
+{info["price"]} FC
+"""
+        )
+
+        return
+
+    await remove_fluger_coins(
+        message.from_user.id,
+        info["price"]
+    )
+
+    await add_item(
+        message.from_user.id,
+        info["item_id"]
+    )
+
+    await message.answer(
+        f"""
+✅ Покупка успешна!
+
+Получено:
+
+{info["name"]}
+
+Потрачено:
+
+{info["price"]} FC
+"""
     )
