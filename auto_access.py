@@ -1,67 +1,42 @@
-from datetime import datetime
-
 from aiogram import Router
 from aiogram.types import ChatMemberUpdated
 from aiogram.enums import ChatMemberStatus
 
-import aiosqlite
-
-from database import DATABASE, set_access
+from database import add_user, set_access
 
 router = Router()
-
-
-async def add_user(user_id, username):
-
-    async with aiosqlite.connect(DATABASE) as db:
-
-        await db.execute(
-            """
-            INSERT OR IGNORE INTO users
-            (
-                user_id,
-                username,
-                joined
-            )
-            VALUES
-            (
-                ?, ?, ?
-            )
-            """,
-            (
-                user_id,
-                username,
-                datetime.now().strftime("%d.%m.%Y")
-            )
-        )
-
-        await db.commit()
 
 
 @router.my_chat_member()
 async def bot_added(event: ChatMemberUpdated):
 
-    print("🤖 Бот добавлен в группу")
+    print("🤖 Сработал auto_access")
 
-    chat = event.chat
-
-    try:
-        admins = await chat.get_administrators()
-
-    except Exception as e:
-        print(e)
+    # Бот должен быть добавлен в группу
+    if event.new_chat_member.status not in (
+        ChatMemberStatus.MEMBER,
+        ChatMemberStatus.ADMINISTRATOR,
+    ):
         return
 
+    try:
+        admins = await event.chat.get_administrators()
+    except Exception as e:
+        print(f"Ошибка получения администраторов: {e}")
+        return
 
     for admin in admins:
 
+        # Ищем владельца группы
         if admin.status == ChatMemberStatus.CREATOR:
 
+            # Добавляем владельца в базу, если его ещё нет
             await add_user(
                 admin.user.id,
                 admin.user.username
             )
 
+            # Выдаём 4 уровень доступа
             await set_access(
                 admin.user.id,
                 4
