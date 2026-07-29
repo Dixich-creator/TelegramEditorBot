@@ -127,7 +127,8 @@ async def create_database():
             name TEXT,
             price INTEGER,
             type TEXT,
-            value TEXT
+            value TEXT,
+            item_id INTEGER
 
         )
         """)
