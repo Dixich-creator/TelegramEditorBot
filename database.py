@@ -1137,15 +1137,19 @@ async def get_inventory(user_id):
                 shop.name,
                 shop.type,
                 shop.value
+
             FROM inventory
 
             JOIN shop
-            ON inventory.item_id = shop.id
+
+            ON inventory.item_id = shop.item_id
 
             WHERE inventory.user_id = ?
             """,
             (user_id,)
         )
+
+        return await cursor.fetchall()
 
         return await cursor.fetchall()
 async def use_item(user_id, item_id):
