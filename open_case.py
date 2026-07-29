@@ -5,12 +5,12 @@ from aiogram.filters import Command
 from aiogram.types import Message
 
 from database import (
-    get_shop_item,
+    get_item_by_id,
     remove_item,
     add_money,
-    add_item,
-    set_access
+    add_item
 )
+
 
 router = Router()
 
@@ -22,51 +22,66 @@ async def open_case(message: Message):
 
     if len(args) != 2:
         await message.answer(
-            "Использование:\n"
-            "/open ID кейса"
+            "❌ Использование:\n"
+            "/open ID кейса\n\n"
+            "Пример:\n"
+            "/open 16"
         )
         return
 
 
     try:
-        case_id = int(args[1])
+        item_id = int(args[1])
 
     except ValueError:
+
         await message.answer(
             "❌ ID должен быть числом."
         )
+
         return
 
 
-    case = await get_shop_item(case_id)
+    # Ищем предмет по item_id
+    case = await get_item_by_id(item_id)
 
 
     if case is None:
+
         await message.answer(
-            "❌ Такого кейса нет."
+            "❌ Такого предмета нет."
         )
+
         return
 
+
+    # Проверяем что это кейс
 
     if not case["type"].startswith("case_"):
+
         await message.answer(
-            "❌ Это не кейс."
+            "❌ Этот предмет нельзя открыть."
         )
+
         return
 
 
-    # проверяем наличие кейса
+    # Проверяем наличие кейса у игрока
+
     removed = await remove_item(
         message.from_user.id,
-        case_id
+        item_id
     )
 
 
     if not removed:
+
         await message.answer(
             "❌ У вас нет такого кейса."
         )
+
         return
+
 
 
     await message.answer(
@@ -75,46 +90,88 @@ async def open_case(message: Message):
     )
 
 
-    # =====================
-    # Кейс FLUGER
-    # =====================
+
+    # =========================
+    # 🎁 КЕЙС FLUGER
+    # =========================
 
     if case["type"] == "case_fluger":
 
+
         rewards = [
-            ("🥤 ШИПУЧКА", 35),
-            ("🌪 ФЛЮГА", 25),
-            ("🪰 МУХАА", 20),
-            ("😈 ДЕМОН", 15),
-            ("⚡ КФГ ФЛЮГЕРА", 5)
+
+            {
+                "name": "🥤 Префикс ШИПУЧКА",
+                "chance": 35,
+                "item_id": 4
+            },
+
+            {
+                "name": "🌪 Префикс ФЛЮГА",
+                "chance": 25,
+                "item_id": 5
+            },
+
+            {
+                "name": "🪰 Префикс МУХАА",
+                "chance": 20,
+                "item_id": 6
+            },
+
+            {
+                "name": "😈 Префикс ДЕМОН",
+                "chance": 15,
+                "item_id": 7
+            },
+
+            {
+                "name": "⚡ КФГ ФЛЮГЕРА",
+                "chance": 5,
+                "item_id": 8
+            }
+
         ]
 
 
-        names = []
-
-        for name, chance in rewards:
-            names += [name] * chance
+        pool = []
 
 
-        reward = random.choice(names)
+        for reward in rewards:
+
+            for _ in range(reward["chance"]):
+
+                pool.append(reward)
+
+
+
+        win = random.choice(pool)
+
+
+
         await add_item(
             message.from_user.id,
-            rewards.index((reward, next(chance for name, chance in rewards if name == reward))) + 4
+            win["item_id"]
         )
 
 
         await message.answer(
-            f"🎉 Поздравляем!\n\n"
-            f"🏆 Выпало:\n"
-            f"{reward}"
+            f"""
+🎉 Поздравляем!
+
+🎁 Вам выпало:
+
+{win["name"]}
+"""
         )
 
 
-    # =====================
-    # Кейс денег
-    # =====================
+
+    # =========================
+    # 💰 КЕЙС ДЕНЕГ
+    # =========================
 
     elif case["type"] == "case_money":
+
 
         money = random.randint(
             200000,
@@ -129,18 +186,28 @@ async def open_case(message: Message):
 
 
         await message.answer(
-            f"🎉 Вам выпало:\n\n"
-            f"💰 {money:,} ₽"
+            f"""
+🎉 Поздравляем!
+
+💰 Вы получили:
+
+{money:,} ₽
+"""
         )
 
 
-    # =====================
-    # Бизнес кейс
-    # =====================
+
+    # =========================
+    # 🏢 БИЗНЕС КЕЙС
+    # =========================
 
     elif case["type"] == "case_business":
 
+
         await message.answer(
-            "🏢 Вам выпал бизнес!\n\n"
-            "Пока система бизнеса будет добавлена следующим шагом."
+            """
+🏢 Бизнес-кейс открыт!
+
+Система бизнеса ещё не подключена.
+"""
         )
