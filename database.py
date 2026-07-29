@@ -1020,30 +1020,7 @@ async def fill_shop():
                     "case_money",
                     "money",
                     17
-                ),
-
-                (
-                    11,
-                    "🏢 Бизнес Кейс",
-                    800000,
-                    "case_business",
-                    "business",
-                    18
-                ),
-
-                # Дуэль
-
-                (
-                    12,
-                    "👑 КФГ ФЛЮГЕРА (ДУЭЛЬ)",
-                    100000000,
-                    "duel_boost",
-                    "20",
-                    13
                 )
-
-            ]
-        )
 
         await db.commit()
         await db.commit()
