@@ -1595,3 +1595,20 @@ async def remove_item(user_id, item_id):
         await db.commit()
 
         return True
+async def get_item_by_id(item_id):
+
+    async with aiosqlite.connect(DATABASE) as db:
+
+        db.row_factory = aiosqlite.Row
+
+        cursor = await db.execute(
+            """
+            SELECT *
+            FROM shop
+            WHERE item_id = ?
+            LIMIT 1
+            """,
+            (item_id,)
+        )
+
+        return await cursor.fetchone()
