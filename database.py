@@ -1013,6 +1013,15 @@ async def fill_shop():
                     16
                 ),
 
+                                (
+                    9,
+                    "🎁 Кейс FLUGER",
+                    1000000,
+                    "case_fluger",
+                    "fluger",
+                    16
+                ),
+
                 (
                     10,
                     "💰 Кейс Монет",
@@ -1022,7 +1031,9 @@ async def fill_shop():
                     17
                 )
 
-        await db.commit()
+            ]
+        )
+
         await db.commit()
 async def get_shop():
 
