@@ -65,9 +65,8 @@ async def buy(message: Message):
 
     await add_item(
         message.from_user.id,
-        item["item_id"]
+        item["id"]
     )
-
     await message.answer(
         f"✅ Вы купили\n\n"
         f"📦 {item['name']}\n"
