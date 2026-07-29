@@ -1575,16 +1575,19 @@ async def remove_item(user_id, item_id):
 
         row = await cursor.fetchone()
 
-        if row:
+        if not row:
+            return False
 
-            await db.execute(
-                """
-                DELETE FROM inventory
-                WHERE rowid = ?
-                """,
-                (
-                    row[0],
-                )
+        await db.execute(
+            """
+            DELETE FROM inventory
+            WHERE rowid = ?
+            """,
+            (
+                row[0],
             )
+        )
 
         await db.commit()
+
+        return True
