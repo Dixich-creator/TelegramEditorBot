@@ -62,6 +62,7 @@ async def buy(message: Message):
         message.from_user.id,
         item["price"]
     )
+    print("ДОБАВЛЯЕМ В ИНВЕНТАРЬ:", item["item_id"])
 
     await add_item(
         message.from_user.id,
